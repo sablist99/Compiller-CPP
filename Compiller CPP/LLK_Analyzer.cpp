@@ -1,12 +1,14 @@
 #include "LLK_Analyzer.h"
 #include <string>
+#include "SemanticTree.h"
 
-
-LLK_Analyzer::LLK_Analyzer(Scaner* _sc) {
+LLK_Analyzer::LLK_Analyzer(Scaner* _sc, Translate* _translate) {
 	sc = _sc;
+    translate = _translate;
 }
 
-void LLK_Analyzer::makeAnalyze() {
+
+void LLK_Analyzer::makeAnalyze(bool printTree) {
     MagPointer = 0;
 	Mag[MagPointer].IsTerm = false;
 	Mag[MagPointer].Type = T_S;
@@ -24,6 +26,7 @@ void LLK_Analyzer::makeAnalyze() {
                 }
                 else {
                     MagPointer--;
+                    translate->setPrevLexem(_lex);
                     lexType = sc->scaner(_lex);
                 }
             }
@@ -35,6 +38,52 @@ void LLK_Analyzer::makeAnalyze() {
         }
         else {  // Если нетерминал
             switch (symb.Type) {
+            case D_START_DECL_DATA:
+                translate->setTypeObject(ObjVar);
+                translate->deltaStartDecl();
+                epsilon();
+                break;
+
+            case D_START_DECL_CONST:
+                translate->setTypeObject(ObjConst);
+                translate->deltaStartDecl();
+                epsilon();
+                break;
+
+            case D_START_DECL_FUNC:
+                translate->setTypeVar(TVoid);
+                translate->setTypeObject(ObjFunc);
+                translate->deltaStartDecl();
+                epsilon();
+                break;
+
+            case D_END_DECL_FUNC:
+                translate->upOnTree();
+                epsilon();
+                break;
+
+            case D_START_SUB:
+                translate->setRightEmpty();
+                epsilon();
+                break;
+
+            case D_END_SUB:
+                translate->upOnTree();
+                epsilon();
+                break;
+
+            case D_END_DECL:
+                translate->setIsConst(false);
+                epsilon();
+                break;
+
+            case D_SET_IDENT:
+                if (!translate->deltaSetIdent()) {
+                    return;
+                }
+                epsilon();
+                break;
+
             case T_S:
                 if (lexType == TConst || lexType == TInt || lexType == TShort || lexType == TVoid || lexType == TChar || lexType == TLong) {
                     Mag[MagPointer].IsTerm = false;
@@ -65,6 +114,10 @@ void LLK_Analyzer::makeAnalyze() {
 
             case T_DESC_CONST:
                 if (lexType == TConst) {
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_DECL;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TSemicolon;
 
@@ -77,8 +130,16 @@ void LLK_Analyzer::makeAnalyze() {
                     Mag[MagPointer].Type = TAssign;
 
                     MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_SET_IDENT;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TIdent;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_DECL_CONST;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
@@ -87,6 +148,8 @@ void LLK_Analyzer::makeAnalyze() {
                     MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TConst;
+
+                    translate->setIsConst(true);
                 }
                 else {
                     handleError("const", "T_DESC_CONST");
@@ -131,12 +194,20 @@ void LLK_Analyzer::makeAnalyze() {
 
             case T_DATA:
                 if (lexType == TInt || lexType == TShort || lexType == TChar || lexType == TLong) {
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_DECL; 
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TSemicolon;
                     
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
                     Mag[MagPointer].Type = T_LIST_IDENT;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_DECL_DATA;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
@@ -153,8 +224,13 @@ void LLK_Analyzer::makeAnalyze() {
                     Mag[MagPointer].Type = T_LIST_IDENT_R1;
 
                     MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_SET_IDENT;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
-                    Mag[MagPointer].Type = TIdent;;
+                    Mag[MagPointer].Type = TIdent;
+
                 }
                 else {
                     handleError("Идентификатор", "T_LIST_IDENT");
@@ -211,18 +287,22 @@ void LLK_Analyzer::makeAnalyze() {
                 if (lexType == TInt) {
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TInt;
+                    translate->setTypeVar(TInt);
                 } 
                 else if (lexType == TShort) {
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TShort;
+                    translate->setTypeVar(TShort);
                 }
                 else if (lexType == TChar) {
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TChar;
+                    translate->setTypeVar(TChar);
                 }
                 else if (lexType == TLong) {
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TLong;
+                    translate->setTypeVar(TLong);
                 }
                 else {
                     handleError("int, short, long, char", "T_TYPE");
@@ -231,6 +311,10 @@ void LLK_Analyzer::makeAnalyze() {
 
             case T_FUNC:
                 if (lexType == TVoid) {
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_DECL_FUNC;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = false;
                     Mag[MagPointer].Type = T_OPER;
 
@@ -247,12 +331,22 @@ void LLK_Analyzer::makeAnalyze() {
                     Mag[MagPointer].Type = TLPar;
 
                     MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_SET_IDENT;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_DECL_FUNC;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TIdent;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TVoid;
+
+
                 }
                 else {
                     handleError("void", "T_FUNC");
@@ -265,8 +359,20 @@ void LLK_Analyzer::makeAnalyze() {
                     Mag[MagPointer].Type = T_FORM_PARAM_R;
 
                     MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_DECL;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_SET_IDENT;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TIdent;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_DECL_DATA;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
@@ -286,8 +392,20 @@ void LLK_Analyzer::makeAnalyze() {
                     Mag[MagPointer].Type = T_FORM_PARAM_R;
 
                     MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_DECL;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_SET_IDENT;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TIdent;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_DECL_DATA;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
@@ -412,12 +530,20 @@ void LLK_Analyzer::makeAnalyze() {
 
             case T_COMB_OPER:
                 if (lexType == TFLPar) {
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_END_SUB;
+
+                    MagPointer++;
                     Mag[MagPointer].IsTerm = true;
                     Mag[MagPointer].Type = TFRPar;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
                     Mag[MagPointer].Type = T_BODY_COMB_OPER;
+
+                    MagPointer++;
+                    Mag[MagPointer].IsTerm = false;
+                    Mag[MagPointer].Type = D_START_SUB;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = true;
@@ -439,11 +565,11 @@ void LLK_Analyzer::makeAnalyze() {
                 }
                 else if (lexType == TConst) {
                     Mag[MagPointer].IsTerm = false;
-                    Mag[MagPointer].Type = T_DESC_CONST;
+                    Mag[MagPointer].Type = T_BODY_COMB_OPER;
 
                     MagPointer++;
                     Mag[MagPointer].IsTerm = false;
-                    Mag[MagPointer].Type = T_BODY_COMB_OPER;
+                    Mag[MagPointer].Type = T_DESC_CONST;
                 }
                 else if (lexType == TInt || lexType == TShort || lexType == TChar || lexType == TLong) {
                     Mag[MagPointer].IsTerm = false;
@@ -775,6 +901,10 @@ void LLK_Analyzer::makeAnalyze() {
                 break;
             }
         }
+    }
+
+    if (printTree) {
+        translate->Print();
     }
 }
 

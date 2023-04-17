@@ -83,6 +83,15 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 #define T_SIMP_OPER_R 134
 #define T_BODY_COMB_OPER 135
 
+#define D_END_DECL 201
+#define D_END_DECL_FUNC 202
+#define D_START_DECL_DATA 203
+#define D_START_DECL_CONST 204
+#define D_START_DECL_FUNC 205
+#define D_SET_IDENT 206	  
+#define D_START_SUB 207	  
+#define D_END_SUB 208	  
+
 #define TEnd 998
 #define TError 999
 
@@ -95,17 +104,17 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 enum TypeObject {
 	ObjConst = 1,   // константа
 	ObjVar,         // переменная
-	ObjFunct,        // функция
+	ObjFunc,        // функция
 	ObjUndef = 10000
 };
 
 enum TypeVar {
-	//TypeConstChar = 1,
+	TypeConstChar = 1,
 	TypeChar,
-	TypeShort = 1,
+	TypeShort,
 	TypeConstInt,
 	TypeInt,
-	//TypeConstHex,
+	TypeConstHex,
 	TypeLong,
 	TypeVoid,
 	TypeIdent,
@@ -121,12 +130,13 @@ struct ScanerPosition {
 
 union DataValue
 {
-	struct {
-		std::vector<TypeVar>* param;
-		ScanerPosition sp;
-	}func;
-	short dataAsShort;
-	int dataAsInt;
+	// для функций - количество параметров
+	std::vector<TypeVar>* param;
+	union
+	{
+		short dataAsShort;
+		int dataAsInt;
+	};
 };
 
 
@@ -138,9 +148,9 @@ struct Node // информация об одной переменной
 	TypeVar typeVar;
 
 	// ссылка на значение
-	DataValue data; // Значение переменной
+	//DataValue data; // Значение переменной
 
-	bool flagInit; // Флаг начальной инициализации
+	//bool flagInit; // Флаг начальной инициализации
 
 	int isEmpty;
 };
@@ -165,6 +175,14 @@ struct TCell
 	unsigned char l; 
 	TOneSymb Rule[MaxLenRule]; 
 } ;
+
+struct GlobalData {
+	Lexem prevLex;
+	bool flagDecl;
+	TypeVar typeVar;
+	TypeObject typeObject;
+	bool isConst;
+};
 
 
 

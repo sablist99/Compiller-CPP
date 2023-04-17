@@ -1,12 +1,19 @@
 #pragma once
 #include "Scaner.h"
+#include "SemanticTree.h"
 #include "defines.h"
 #include <iostream>
+#include "Translate.h"
 
 class LLK_Analyzer{
 
+public:
+	LLK_Analyzer(Scaner* _sc, Translate* _translate);
+	void makeAnalyze(bool printTree);
+
 private:
 	Scaner* sc;
+	Translate* translate;
 	Lexem _lex; // графическое отображение лексемы
 	int lexType;// Тип лексемы - числовая константа
 	TOneSymb Mag[MaxLenMag];
@@ -16,8 +23,6 @@ private:
 	void epsilon();
 	void handleError(std::string, std::string);
 
-public:
-	LLK_Analyzer(Scaner*);
-	void makeAnalyze();
+
 
 };
