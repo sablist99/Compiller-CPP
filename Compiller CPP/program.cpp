@@ -1,37 +1,15 @@
 
-int d;
-const int conI = 0xab2;
-const short conS = 0xab2;
-const char conC = 0xab2;
-const long conL = 0xab2;
-
-void abc(int i, short s, char c, long l) {
-	const long conLabc = 0xab2;
-	int in = 10;
-	short sh = 10;
-	char cn;
-	long lo;
-}
-
-void abc1(int i, short s, char c, long l) {
-	const long conLabc = 0xab2;
-	int in = 10;
-	short sh = 10;
-	char cn;
-	long lo;
-	{
-		int sub1;
-		const long conLSUB = 0xab2;
-	}
-}
-
 void main() {
-	abc();
-	abc1(y);
-	while (a < b) {
-		b = a;
-		const long conLmain = 0xab2;
-	}
+	long n = 10;
+	int b = 20;
+	int a = (n + 2) % b;
+	//int a1 = 1;
+	//int a2 = 2;
+	//int a3 = a1 + a2;
+	//int a4 = 4;
+	//short a5 = 5;
+	//int a = a5 + a5;
+	//int b = 10 + 11;
 }
 
 

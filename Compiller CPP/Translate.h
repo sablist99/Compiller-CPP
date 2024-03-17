@@ -7,13 +7,14 @@ class Translate
 {
 public:
 	SemanticTree* st;
-	GlobalData global;
+	GlobalData* global;
 	void deltaStartDecl();
 	void deltaEndDecl();
 	bool deltaSetIdent();
 
 	void setTypeObject(TypeObject typeObject);
 	void setTypeVar(int lexType);
+	void semMatch();
 	void setPrevLexem(Lexem lexem);
 	void setIsConst(bool value);
 
@@ -21,6 +22,6 @@ public:
 	void setRightEmpty();
 
 	void Print();
-	Translate(SemanticTree* tr);
+	Translate(SemanticTree* tr, GlobalData* gl);
 };
 

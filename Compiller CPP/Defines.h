@@ -6,9 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <deque>
 
 #define MAX_TEXT_LENGHT 10000 // максимальна€ длина текста
 #define MAX_LEXEM_LENGHT 100 // максимальна€ длина лексемы
+#define MAX_TRIAD_COUNT 1000 // максимальна€ длина лексемы
 #define KEY_WORD_COUNT 12 // число ключевых слов
 typedef char Lexem[MAX_LEXEM_LENGHT];
 typedef char TypeText[MAX_TEXT_LENGHT];
@@ -92,6 +94,24 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 #define D_START_SUB 207	  
 #define D_END_SUB 208	  
 
+#define TR_MATCH 301	  
+#define TR_MATCH_LEFT 302	  
+#define TR_SET_ADDR 303	  
+#define TR_GENER_IF 304	  
+#define TR_FORM_IF 305	  
+#define TR_GENER_GOTO 306	  
+#define TR_GENER_NOP 307	  
+#define TR_GENER_PLUS 308	  
+#define TR_GENER_MINUS 309	  
+#define TR_GENER_MULT 310	  
+#define TR_GENER_DIV 311	  
+#define TR_GENER_MOD 312	  
+#define TR_GENER_ASSIGN 313	  
+#define TR_FIND 314
+#define TR_PUSH_R 315	  
+#define TR_PUSH_IDENT 316	  
+#define TR_PUSH_NUMBER 317	  
+
 #define TEnd 998
 #define TError 999
 
@@ -100,6 +120,32 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 #define ERROR_CHAR_CONAT "Ќеверна€ символьна€ константа"
 #define ERROR_CHAR "Ќеверный символ"
 #define EMPTY_STRING ""
+
+#define CtoS "c->s"
+#define CtoI "c->i"
+#define CtoL "c->l"
+#define StoC "s->c"
+#define StoI "s->i"
+#define StoL "s->l"
+#define ItoC "i->c"
+#define ItoS "i->s"
+#define ItoL "i->l"
+#define LtoC "l->c"
+#define LtoS "l->s"
+#define LtoI "l->i"
+
+struct Operand {
+	bool isLink;
+	//  непосредственный операнд или ссылка
+	int triadeNumber;    // номер триады-ссылки
+	Lexem lex;         // непосредственный операнд
+};
+
+struct Triad {
+	Lexem operation;  //  операци€
+	Operand operand1, operand2;
+};
+
 
 enum TypeObject {
 	ObjConst = 1,   // константа
@@ -111,8 +157,8 @@ enum TypeObject {
 enum TypeVar {
 	TypeConstChar = 1,
 	TypeChar,
-	TypeShort,
 	TypeConstInt,
+	TypeShort,
 	TypeInt,
 	TypeConstHex,
 	TypeLong,
@@ -126,7 +172,6 @@ struct ScanerPosition {
 	int line;
 	int pos;
 };
-
 
 union DataValue
 {
@@ -155,7 +200,6 @@ struct Node // информаци€ об одной переменной
 	int isEmpty;
 };
 
-
 //	 ћагазин
 
 #define MaxLenMag 1000
@@ -166,24 +210,17 @@ struct TOneSymb
 	Lexem Lex; // »зображение лексемы
 };
 
-
-#define MaxLenRule 15
-#define MaxNeterm 100
-#define MaxTerm 100
-struct TCell
-{ 
-	unsigned char l; 
-	TOneSymb Rule[MaxLenRule]; 
-} ;
-
 struct GlobalData {
 	Lexem prevLex;
+	Lexem prevAllLex;
 	bool flagDecl;
 	TypeVar typeVar;
 	TypeObject typeObject;
 	bool isConst;
+	std::deque<TypeVar> typesMagazine;
+	std::deque<Operand> resultsMagazine;
+	int triadIndex = 0;
+	std::deque<Triad> triads;
+	std::deque<int> triadesIndexMagazine;
 };
-
-
-
 #endif

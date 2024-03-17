@@ -10,22 +10,13 @@ int main()
 {
     setlocale(LC_ALL, "ru");
     Scaner* sc = new Scaner(_strdup("program.cpp"));
+    GlobalData* global = new GlobalData();
     SemanticTree* tr = new SemanticTree();
-    Translate* translate = new Translate(tr);
+    Translate* translate = new Translate(tr, global);
+    ILGenerator* generator = new ILGenerator(tr, global);
+
     tr->SetCur(tr);
-    LLK_Analyzer* llk = new LLK_Analyzer(sc, translate);
+    LLK_Analyzer* llk = new LLK_Analyzer(sc, translate, generator);
 
     llk->makeAnalyze(true);
-
-                                
-
-    
-
-    
-
-
-
-
-
-
 }
