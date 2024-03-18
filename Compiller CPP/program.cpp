@@ -1,8 +1,9 @@
 
 void main() {
-	long n = 10;
+	long a = 10;
 	int b = 20;
-	int a = (n + 2) % b;
+	short c = 30;
+	int d = (c + b + a) % b;
 	//int a1 = 1;
 	//int a2 = 2;
 	//int a3 = a1 + a2;

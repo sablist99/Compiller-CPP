@@ -92,9 +92,15 @@ bool ILGenerator::isShortTriad(Lexem* operation) {
     if (memcmp(operation, CtoS, sizeof(CtoS)) == 0 ||
         memcmp(operation, CtoI, sizeof(CtoI)) == 0 ||
         memcmp(operation, CtoL, sizeof(CtoL)) == 0 ||
-        memcmp(operation, StoI, sizeof(StoI)) == 0 ||
-        memcmp(operation, StoL, sizeof(StoL)) == 0 ||
-        memcmp(operation, ItoL, sizeof(ItoL)) == 0) {
+        memcmp(operation, StoC, sizeof(StoC)) == 0 ||
+		memcmp(operation, StoI, sizeof(StoI)) == 0 ||
+		memcmp(operation, StoL, sizeof(StoL)) == 0 ||
+		memcmp(operation, ItoC, sizeof(ItoC)) == 0 ||
+		memcmp(operation, ItoS, sizeof(ItoS)) == 0 ||
+		memcmp(operation, ItoL, sizeof(ItoL)) == 0 ||
+		memcmp(operation, LtoC, sizeof(LtoC)) == 0 ||
+		memcmp(operation, LtoS, sizeof(LtoS)) == 0 ||
+        memcmp(operation, LtoI, sizeof(LtoI)) == 0) {
         return true;
     }
     return false;
