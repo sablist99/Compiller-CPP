@@ -3,17 +3,24 @@
 
 class ILGenerator 
 {
+private:
+	Lexem* getLexemFromString(std::string s);
+
 public:
 	SemanticTree* tree;
 	GlobalData* global;
 	int triadPointer;       //   индекс  первой  генерируемой  триады
 	Triad triads[MAX_TRIAD_COUNT];      //  триады
 
-	void deltaFind();
+	void setAddr();
+	void generateIfTriad();
+	void generateGoto();
+	void generateNop();
+	void generateFormIf();
 	void deltaMatch(bool isLeftMatch);
 	void deltaPushOperand(bool isConst);
-	void generateTriade(Lexem* operation, bool isOperation);
+	void generateTriade(std::string operationString, bool isOperation);
 	bool isShortTriad(Lexem* operation);
-	Lexem* getMatchLexem(TypeVar v1, TypeVar v2, bool* swap);
+	std::string getMatchLexem(TypeVar v1, TypeVar v2, bool* swap);
 	ILGenerator(SemanticTree* tr, GlobalData* gl);
 };

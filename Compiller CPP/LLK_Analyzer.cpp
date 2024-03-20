@@ -8,11 +8,7 @@ LLK_Analyzer::LLK_Analyzer(Scaner* _sc, Translate* _translate, ILGenerator* _gen
 	generator = _generator;
 }
 
-Lexem* LLK_Analyzer::getLexemFromString(std::string s) {
-	Lexem lexem;
-	memcpy(lexem, s.c_str(), sizeof(s.size()));
-	return &lexem;
-}
+
 
 void LLK_Analyzer::makeAnalyze(bool printTree) {
 	MagPointer = 0;
@@ -54,37 +50,73 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				break;
 
 			case TR_GENER_PLUS:
-				generator->generateTriade(getLexemFromString("+"), true);
+				generator->generateTriade("+", true);
 				epsilon();
 				break;
 
 			case TR_GENER_MINUS:
-				generator->generateTriade(getLexemFromString("-"), true);
+				generator->generateTriade("-", true);
 				epsilon();
 				break;
 
 			case TR_GENER_MOD:
-				generator->generateTriade(getLexemFromString("%"), true);
+				generator->generateTriade("%", true);
 				epsilon();
 				break;
 
 			case TR_GENER_DIV:
-				generator->generateTriade(getLexemFromString("/"), true);
+				generator->generateTriade("/", true);
 				epsilon();
 				break;
 
 			case TR_GENER_MULT:
-				generator->generateTriade(getLexemFromString("*"), true);
+				generator->generateTriade("*", true);
+				epsilon();
+				break;
+
+			case TR_GENER_L:
+				generator->generateTriade("<", true);
+				epsilon();
+				break;
+
+			case TR_GENER_R:
+				generator->generateTriade(">", true);
+				epsilon();
+				break;
+
+			case TR_GENER_LE:
+				generator->generateTriade("<=", true);
+				epsilon();
+				break;
+
+			case TR_GENER_RE:
+				generator->generateTriade(">=", true);
+				epsilon();
+				break;
+
+			case TR_GENER_E:
+				generator->generateTriade("==", true);
+				epsilon();
+				break;
+
+			case TR_GENER_NE:
+				generator->generateTriade("!=", true);
+				epsilon();
+				break;
+
+			case TR_GENER_LSH:
+				generator->generateTriade("<<", true);
+				epsilon();
+				break;
+
+			case TR_GENER_RSH:
+				generator->generateTriade(">>", true);
 				epsilon();
 				break;
 
 			case TR_GENER_ASSIGN:
-				generator->generateTriade(getLexemFromString("="), false);
+				generator->generateTriade("=", false);
 				epsilon();
-				break;
-
-			case TR_PUSH_R:
-
 				break;
 
 			case TR_PUSH_IDENT:
@@ -94,6 +126,31 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 
 			case TR_PUSH_NUMBER:
 				generator->deltaPushOperand(true);
+				epsilon();
+				break;
+
+			case TR_GENER_NOP:
+				generator->generateNop();
+				epsilon();
+				break;
+
+			case TR_FORM_IF:
+				generator->generateFormIf();
+				epsilon();
+				break;
+
+			case TR_GENER_GOTO:
+				generator->generateGoto();
+				epsilon();
+				break;
+
+			case TR_GENER_IF:
+				generator->generateIfTriad();
+				epsilon();
+				break;
+
+			case TR_SET_ADDR:
+				generator->setAddr();
 				epsilon();
 				break;
 
@@ -675,7 +732,27 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 			case T_WHILE:
 				if (lexType == TWhile) {
 					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_GENER_NOP;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_GENER_GOTO;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_FORM_IF;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = T_OPER;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_GENER_IF;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_SET_ADDR;
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
@@ -688,6 +765,10 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
 					Mag[MagPointer].Type = TLPar;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_SET_ADDR;
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
@@ -897,6 +978,35 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
+					switch (lexType) {
+					case TL:
+						Mag[MagPointer].Type = TR_GENER_L;
+						break;
+					case TR:
+						Mag[MagPointer].Type = TR_GENER_R;
+						break;
+					case TLE:
+						Mag[MagPointer].Type = TR_GENER_LE;
+						break;
+					case TRE:
+						Mag[MagPointer].Type = TR_GENER_RE;
+						break;
+					case TE:
+						Mag[MagPointer].Type = TR_GENER_E;
+						break;
+					case TNE:
+						Mag[MagPointer].Type = TR_GENER_NE;
+						break;
+					default:
+						handleError("Неожиданный операнд", "T_EXPR_1_R");
+					}
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_MATCH;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = T_EXPR_1;
 
 					MagPointer++;
@@ -920,7 +1030,24 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				}
 				else if (lexType == TLSh || lexType == TRSh) {
 					Mag[MagPointer].IsTerm = false;
-					Mag[MagPointer].Type = T_EXPR_1_R;
+					Mag[MagPointer].Type = T_EXPR_1_R;	 
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					switch (lexType) {
+					case TLSh:
+						Mag[MagPointer].Type = TR_GENER_LSH;
+						break;
+					case TRSh:
+						Mag[MagPointer].Type = TR_GENER_RSH;
+						break;
+					default:
+						handleError("Неожиданный операнд", "T_EXPR_1_R");
+					}
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_MATCH;
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
@@ -952,11 +1079,15 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 					
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
-					if (lexType == TPlus) {
+					switch (lexType) {
+					case TPlus:
 						Mag[MagPointer].Type = TR_GENER_PLUS;
-					}
-					if (lexType == TMinus) {
+						break;
+					case TMinus:
 						Mag[MagPointer].Type = TR_GENER_MINUS;
+						break;
+					default:
+						handleError("Неожиданный операнд", "T_EXPR_2_R");
 					}
 
 					MagPointer++;
@@ -994,14 +1125,18 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
-					if (lexType == TMult) {
+					switch (lexType) {
+					case TMult:
 						Mag[MagPointer].Type = TR_GENER_MULT;
-					}
-					if (lexType == TDiv) {
+						break;
+					case TDiv:
 						Mag[MagPointer].Type = TR_GENER_DIV;
-					}
-					if (lexType == TMod) {
+						break;
+					case TMod:
 						Mag[MagPointer].Type = TR_GENER_MOD;
+						break;
+					default:
+						handleError("Неожиданный операнд", "T_EXPR_3_R");
 					}
 
 					MagPointer++;

@@ -106,11 +106,19 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 #define TR_GENER_MULT 310	  
 #define TR_GENER_DIV 311	  
 #define TR_GENER_MOD 312	  
-#define TR_GENER_ASSIGN 313	  
-#define TR_FIND 314
-#define TR_PUSH_R 315	  
-#define TR_PUSH_IDENT 316	  
-#define TR_PUSH_NUMBER 317	  
+#define TR_GENER_L 313	  
+#define TR_GENER_R 314	  
+#define TR_GENER_LE 315	  
+#define TR_GENER_RE 316	  
+#define TR_GENER_E 317	  
+#define TR_GENER_NE 318	  
+#define TR_GENER_LSH 319	  
+#define TR_GENER_RSH 320	  
+#define TR_GENER_ASSIGN 321	  
+#define TR_FIND 322
+#define TR_PUSH_R 323	  
+#define TR_PUSH_IDENT 324	  
+#define TR_PUSH_NUMBER 325	  
 
 #define TEnd 998
 #define TError 999

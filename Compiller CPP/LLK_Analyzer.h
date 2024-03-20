@@ -24,5 +24,4 @@ private:
 
 	void epsilon();
 	void handleError(std::string, std::string);
-	Lexem* getLexemFromString(std::string s);
 };

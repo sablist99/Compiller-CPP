@@ -6,8 +6,65 @@ ILGenerator::ILGenerator(SemanticTree* tr, GlobalData* gl)
     global = gl;
 }
 
-void ILGenerator::deltaFind() {
+Lexem* ILGenerator::getLexemFromString(std::string s) {
+	Lexem lexem;
+	memcpy(lexem, s.c_str(), sizeof(s.size()));
+	return &lexem;
+}
 
+void ILGenerator::setAddr() {
+	global->triadesIndexMagazine.push_back(global->triads.size());
+}
+
+void ILGenerator::generateIfTriad() {
+	Triad triad{};
+
+	Lexem* operation = getLexemFromString("if");
+	memcpy(triad.operation, operation, sizeof(operation));
+
+	Operand first{};
+	first.isLink = true;
+	first.triadeNumber = this->global->triads.size() + 1;	// ?
+
+	triad.operand1 = first;
+	this->global->triads.push_back(triad);
+}
+
+void ILGenerator::generateFormIf() {
+	int triadNumber = global->triadesIndexMagazine.back();
+	global->triadesIndexMagazine.pop_back();
+
+	Operand second{};
+	second.isLink = true;
+	second.triadeNumber = global->triads.size() + 1; // ?
+
+	global->triads.at(triadNumber).operand2 = second;
+}
+
+void ILGenerator::generateGoto() {
+	int triadNumber = global->triadesIndexMagazine.back();
+	global->triadesIndexMagazine.pop_back();
+
+	Triad triad{};
+
+	Lexem* operation = getLexemFromString("goto");
+	memcpy(triad.operation, operation, sizeof(operation));
+
+	Operand first{};
+	first.isLink = true;
+	first.triadeNumber = triadNumber;	// ?
+
+	triad.operand1 = first;
+	this->global->triads.push_back(triad);
+}
+
+void ILGenerator::generateNop() {
+	Triad triad{};
+
+	Lexem* operation = getLexemFromString("nop");
+	memcpy(triad.operation, operation, sizeof(operation));
+
+	this->global->triads.push_back(triad);
 }
 
 void ILGenerator::deltaMatch(bool isLeftMatch) {
@@ -21,7 +78,7 @@ void ILGenerator::deltaMatch(bool isLeftMatch) {
 	else {
 		// Сопоставление по левой части (например, при присваивании) 
 		bool swap = false;
-		Lexem* matchLexem = getMatchLexem(v1, v2, &swap);
+		std::string matchLexem = getMatchLexem(v1, v2, &swap);
 		if (isLeftMatch) {
 			if (swap) {
 				generateTriade(matchLexem, false);
@@ -29,7 +86,7 @@ void ILGenerator::deltaMatch(bool isLeftMatch) {
 			global->typesMagazine.push_back(v1);
 		}
 		else {
-			if (matchLexem != NULL) {
+			if (matchLexem != "") {
 				// Если матчить все таки нужно
 				// Определяем, какой тип положить в дек
 				generateTriade(matchLexem, false);
@@ -61,9 +118,10 @@ void ILGenerator::deltaPushOperand(bool isConst) {
     global->resultsMagazine.push_back(operand);
 }
 
-void ILGenerator::generateTriade(Lexem* operation, bool isOperation) {
+void ILGenerator::generateTriade(std::string operationString, bool isOperation) {
+	Lexem* operation = getLexemFromString(operationString);
     bool isShort = isShortTriad(operation);
-    Triad triad;
+	Triad triad{};
     memcpy(triad.operation, operation, sizeof(operation));
 
     Operand first = global->resultsMagazine.back();
@@ -106,10 +164,10 @@ bool ILGenerator::isShortTriad(Lexem* operation) {
     return false;
 }
 
-Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
+std::string ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 	if (v1 >= TypeVoid || v2 >= TypeVoid) {
 		std::cout << "Ошибка генератора. Неожиданный тип операнда -  " << v1 << " или " << v2 << std::endl;
-		return NULL;
+		return "";
 	}
 	if (v1 < v2) {
 		TypeVar buf = v1;
@@ -121,23 +179,19 @@ Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 		*swap = false;
 	}
 
-	Lexem l;
 	switch (v2) {
 	case TypeConstChar:
-		return NULL;
+		return "";
 	case TypeConstInt:
-		return NULL;
+		return "";
 	case TypeChar:
 		switch (v1) {
 		case TypeShort:
-			memcpy(l, CtoS, sizeof(CtoS));
-			return &l;
+			return CtoS;
 		case TypeInt:
-			memcpy(l, CtoI, sizeof(CtoI));
-			return &l;
+			return CtoI;
 		case TypeLong:
-			memcpy(l, CtoL, sizeof(CtoL));
-			return &l;
+			return CtoL;
 		default:
 			std::cout << "Ошибка генератора. Невозможно привести -  " << v2 << " к " << v1 << std::endl;
 			break;
@@ -146,14 +200,11 @@ Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 	case TypeShort:
 		switch (v1) {
 		case TypeChar:
-			memcpy(l, StoC, sizeof(StoC));
-			return &l;
+			return StoC;
 		case TypeInt:
-			memcpy(l, StoI, sizeof(StoI));
-			return &l;
+			return StoI;
 		case TypeLong:
-			memcpy(l, StoL, sizeof(StoL));
-			return &l;
+			return StoL;
 		default:
 			std::cout << "Ошибка генератора. Невозможно привести -  " << v2 << " к " << v1 << std::endl;
 			break;
@@ -162,14 +213,11 @@ Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 	case TypeInt:
 		switch (v1) {
 		case TypeChar:
-			memcpy(l, ItoC, sizeof(ItoC));
-			return &l;
+			return ItoC;
 		case TypeShort:
-			memcpy(l, ItoS, sizeof(ItoS));
-			return &l;
+			return ItoS;
 		case TypeLong:
-			memcpy(l, ItoL, sizeof(ItoL));
-			return &l;
+			return ItoL;
 		default:
 			std::cout << "Ошибка генератора. Невозможно привести -  " << v2 << " к " << v1 << std::endl;
 			break;
@@ -178,14 +226,11 @@ Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 	case TypeLong:
 		switch (v1) {
 		case TypeChar:
-			memcpy(l, LtoC, sizeof(LtoC));
-			return &l;
+			return LtoC;
 		case TypeShort:
-			memcpy(l, LtoS, sizeof(LtoS));
-			return &l;
+			return LtoS;
 		case TypeInt:
-			memcpy(l, LtoI, sizeof(LtoI));
-			return &l;
+			return LtoI;
 		default:
 			std::cout << "Ошибка генератора. Невозможно привести -  " << v2 << " к " << v1 << std::endl;
 			break;
@@ -196,5 +241,5 @@ Lexem* ILGenerator::getMatchLexem(TypeVar v1, TypeVar v2, bool* swap) {
 		break;
 	}
 	std::cout << "Ошибка генератора. Невозможно привести -  " << v2 << " к " << v1 << std::endl;
-	return NULL;
+	return "";
 }
