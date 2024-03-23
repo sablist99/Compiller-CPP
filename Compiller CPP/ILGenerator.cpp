@@ -16,6 +16,84 @@ void ILGenerator::setAddr() {
 	global->triadesIndexMagazine.push_back(global->triads.size());
 }
 
+void ILGenerator::startFunc() {
+	Triad triad{};
+
+	Lexem* operation = getLexemFromString("proc");
+	memcpy(triad.operation, operation, sizeof(operation));
+
+	Operand first{};
+	first.isLink = false;
+	Operand ident = global->resultsMagazine.back();
+	global->resultsMagazine.pop_back();
+	global->typesMagazine.pop_back();
+	memcpy(first.lex, ident.lex, sizeof(ident.lex));
+
+	triad.operand1 = first;
+	this->global->triads.push_back(triad);
+}
+
+void ILGenerator::endFunc() {
+	Triad triadEpilog{};
+
+	Lexem* operationEpilog = getLexemFromString("epilog");
+	memcpy(triadEpilog.operation, operationEpilog, sizeof(operationEpilog));
+
+	this->global->triads.push_back(triadEpilog);
+
+
+	Triad triadRet{};
+
+	Lexem* operationRet = getLexemFromString("ret");
+	memcpy(triadRet.operation, operationRet, sizeof(operationRet));
+
+	this->global->triads.push_back(triadRet);
+
+
+	Triad triadEndp{};
+
+	Lexem* operationEndp = getLexemFromString("endp");
+	memcpy(triadEndp.operation, operationEndp, sizeof(operationEndp));
+
+	this->global->triads.push_back(triadEndp);
+}
+
+void ILGenerator::callFunc() {
+	Triad triadCall{};
+
+	Lexem* operationCall = getLexemFromString("call");
+	memcpy(triadCall.operation, operationCall, sizeof(operationCall));
+
+	Operand first{};
+	first.isLink = false;
+	Operand ident = global->resultsMagazine.back();
+	global->resultsMagazine.pop_back();
+	global->typesMagazine.pop_back();
+	memcpy(first.lex, ident.lex, sizeof(ident.lex));
+
+	triadCall.operand1 = first;
+
+	this->global->triads.push_back(triadCall);
+}
+
+void ILGenerator::generatePushParamTriad() {
+	Triad triadPush{};
+
+	Lexem* operationPush = getLexemFromString("push");
+	memcpy(triadPush.operation, operationPush, sizeof(operationPush));
+
+	Operand first{};
+	first.isLink = false;
+	Operand ident = global->resultsMagazine.back();
+	global->resultsMagazine.pop_back();
+	global->typesMagazine.pop_back();
+	memcpy(first.lex, ident.lex, sizeof(ident.lex));
+
+	triadPush.operand1 = first;
+
+	this->global->triads.push_back(triadPush);
+}
+
 void ILGenerator::generateIfTriad() {
 	Triad triad{};
 
@@ -24,7 +102,7 @@ void ILGenerator::generateIfTriad() {
 
 	Operand first{};
 	first.isLink = true;
-	first.triadeNumber = this->global->triads.size() + 1;	// ?
+	first.triadeNumber = this->global->triads.size() + 1;
 
 	triad.operand1 = first;
 	this->global->triads.push_back(triad);
@@ -36,7 +114,7 @@ void ILGenerator::generateFormIf() {
 
 	Operand second{};
 	second.isLink = true;
-	second.triadeNumber = global->triads.size() + 1; // ?
+	second.triadeNumber = global->triads.size() + 1;
 
 	global->triads.at(triadNumber).operand2 = second;
 }
@@ -52,7 +130,7 @@ void ILGenerator::generateGoto() {
 
 	Operand first{};
 	first.isLink = true;
-	first.triadeNumber = triadNumber;	// ?
+	first.triadeNumber = triadNumber;
 
 	triad.operand1 = first;
 	this->global->triads.push_back(triad);

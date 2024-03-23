@@ -115,10 +115,13 @@ typedef char TypeText[MAX_TEXT_LENGHT];
 #define TR_GENER_LSH 319	  
 #define TR_GENER_RSH 320	  
 #define TR_GENER_ASSIGN 321	  
-#define TR_FIND 322
-#define TR_PUSH_R 323	  
 #define TR_PUSH_IDENT 324	  
 #define TR_PUSH_NUMBER 325	  
+#define TR_START_FUNC 326	  
+#define TR_END_FUNC 327	  
+#define TR_GENER_PUSH_PARAM 328	  
+#define TR_CALL_FUNC 329	  
+
 
 #define TEnd 998
 #define TError 999

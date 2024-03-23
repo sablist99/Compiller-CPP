@@ -154,6 +154,25 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				epsilon();
 				break;
 
+			case TR_START_FUNC:
+				generator->startFunc();
+				epsilon();
+				break;
+
+			case TR_END_FUNC:
+				generator->endFunc();
+				epsilon();
+				break;
+
+			case TR_GENER_PUSH_PARAM:
+				generator->generatePushParamTriad();
+				epsilon();
+				break;
+
+			case TR_CALL_FUNC:
+				generator->callFunc();
+				epsilon();
+				break;
 
 
 
@@ -447,7 +466,15 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_END_FUNC;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = T_OPER;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_START_FUNC;
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
@@ -470,14 +497,16 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 					Mag[MagPointer].Type = D_START_DECL_FUNC;
 
 					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_PUSH_IDENT;
+
+					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
 					Mag[MagPointer].Type = TIdent;
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
 					Mag[MagPointer].Type = TVoid;
-
-
 				}
 				else {
 					handleError("void", "T_FUNC");
@@ -608,13 +637,9 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = T_SIMP_OPER_R;
 
-					// сюда push_r
-
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = TR_PUSH_IDENT;
-
-					// сюда find
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
@@ -652,12 +677,21 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_CALL_FUNC;
+
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = T_FUNC_CALL;
 				}
 				else if (lexType == TAssign) {
-					// сюда gener
-					// сюда matchleft
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_GENER_ASSIGN;
 
+					MagPointer++;
+					Mag[MagPointer].IsTerm = false;
+					Mag[MagPointer].Type = TR_MATCH_LEFT;
+
+					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
 					Mag[MagPointer].Type = TSemicolon;
 
@@ -930,8 +964,6 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = TR_PUSH_IDENT;
 
-					// сюда find 
-
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;
 					Mag[MagPointer].Type = TIdent;
@@ -939,8 +971,6 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				else if (lexType == TConstInt) {
 					Mag[MagPointer].IsTerm = false;
 					Mag[MagPointer].Type = TR_PUSH_NUMBER;
-
-					// сюда consttype 
 
 					MagPointer++;
 					Mag[MagPointer].IsTerm = true;

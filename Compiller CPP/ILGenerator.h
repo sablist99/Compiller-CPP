@@ -9,10 +9,12 @@ private:
 public:
 	SemanticTree* tree;
 	GlobalData* global;
-	int triadPointer;       //   индекс  первой  генерируемой  триады
-	Triad triads[MAX_TRIAD_COUNT];      //  триады
 
 	void setAddr();
+	void startFunc();
+	void endFunc();
+	void callFunc();
+	void generatePushParamTriad();
 	void generateIfTriad();
 	void generateGoto();
 	void generateNop();
