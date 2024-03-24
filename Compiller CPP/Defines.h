@@ -155,6 +155,13 @@ struct Operand {
 struct Triad {
 	Lexem operation;  //  операция
 	Operand operand1, operand2;
+	TypeOperation typeOperation;
+};
+
+enum TypeOperation {
+	NoneOperation,
+	MathOperation,
+	LogicOperation
 };
 
 

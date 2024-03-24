@@ -159,7 +159,7 @@ void ILGenerator::deltaMatch(bool isLeftMatch) {
 		std::string matchLexem = getMatchLexem(v1, v2, &swap);
 		if (isLeftMatch) {
 			if (swap) {
-				generateTriade(matchLexem, false);
+				generateTriade(matchLexem, NoneOperation);
 			}
 			global->typesMagazine.push_back(v1);
 		}
@@ -167,7 +167,7 @@ void ILGenerator::deltaMatch(bool isLeftMatch) {
 			if (matchLexem != "") {
 				// Если матчить все таки нужно
 				// Определяем, какой тип положить в дек
-				generateTriade(matchLexem, false);
+				generateTriade(matchLexem, NoneOperation);
 				if (swap) {
 					global->typesMagazine.push_back(v2);
 				}
@@ -183,7 +183,7 @@ void ILGenerator::deltaMatch(bool isLeftMatch) {
 }
 
 void ILGenerator::deltaPushOperand(bool isConst) {
-    Operand operand;
+	Operand operand{};
     operand.isLink = false;
     memcpy(operand.lex, this->global->prevLex, sizeof(this->global->prevLex));
     if (isConst) {
@@ -196,7 +196,7 @@ void ILGenerator::deltaPushOperand(bool isConst) {
     global->resultsMagazine.push_back(operand);
 }
 
-void ILGenerator::generateTriade(std::string operationString, bool isOperation) {
+void ILGenerator::generateTriade(std::string operationString, TypeOperation typeOperation) {
 	Lexem* operation = getLexemFromString(operationString);
     bool isShort = isShortTriad(operation);
 	Triad triad{};
@@ -213,11 +213,13 @@ void ILGenerator::generateTriade(std::string operationString, bool isOperation) 
         triad.operand2 = second;
     }
 
+	triad.typeOperation = typeOperation;
+
     this->global->triads.push_back(triad);
 
     if (memcmp(operation, "=", sizeof("=")) != 0) {
         // Если необходимо в дэк результатов положить ссылку на текущую триаду
-        Operand triadeOperand;
+		Operand triadeOperand{};
         triadeOperand.isLink = true;
         triadeOperand.triadeNumber = this->global->triads.size() - 1;
         global->resultsMagazine.push_back(triadeOperand);

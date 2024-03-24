@@ -5,6 +5,7 @@
 #include "Scaner.h"
 #include "LLK_Analyzer.h"
 #include "SemanticTree.h"
+#include "Optimizator.h"
 
 int main()
 {
@@ -14,6 +15,9 @@ int main()
     SemanticTree* tr = new SemanticTree();
     Translate* translate = new Translate(tr, global);
     ILGenerator* generator = new ILGenerator(tr, global);
+    Optimizator* optimizator = new Optimizator(global);
+    optimizator->SimplifyingCalculationMathematicalFunctions();
+    optimizator->SimplifyingLogicalOperations();
 
     tr->SetCur(tr);
     LLK_Analyzer* llk = new LLK_Analyzer(sc, translate, generator);

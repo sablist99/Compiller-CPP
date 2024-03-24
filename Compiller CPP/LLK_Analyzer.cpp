@@ -50,72 +50,72 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				break;
 
 			case TR_GENER_PLUS:
-				generator->generateTriade("+", true);
+				generator->generateTriade("+", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_MINUS:
-				generator->generateTriade("-", true);
+				generator->generateTriade("-", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_MOD:
-				generator->generateTriade("%", true);
+				generator->generateTriade("%", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_DIV:
-				generator->generateTriade("/", true);
+				generator->generateTriade("/", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_MULT:
-				generator->generateTriade("*", true);
+				generator->generateTriade("*", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_L:
-				generator->generateTriade("<", true);
+				generator->generateTriade("<", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_R:
-				generator->generateTriade(">", true);
+				generator->generateTriade(">", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_LE:
-				generator->generateTriade("<=", true);
+				generator->generateTriade("<=", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_RE:
-				generator->generateTriade(">=", true);
+				generator->generateTriade(">=", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_E:
-				generator->generateTriade("==", true);
+				generator->generateTriade("==", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_NE:
-				generator->generateTriade("!=", true);
+				generator->generateTriade("!=", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_LSH:
-				generator->generateTriade("<<", true);
+				generator->generateTriade("<<", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_RSH:
-				generator->generateTriade(">>", true);
+				generator->generateTriade(">>", LogicOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_ASSIGN:
-				generator->generateTriade("=", false);
+				generator->generateTriade("=", NoneOperation);
 				epsilon();
 				break;
 
