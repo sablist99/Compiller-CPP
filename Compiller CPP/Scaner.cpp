@@ -8,7 +8,6 @@ Lexem Keyword[KEY_WORD_COUNT] = {
 
 int IndexKeyword[KEY_WORD_COUNT] = {
 	TInt, TShort, TLong, TChar, TVoid, TReturn, TBreak, TWhile, TConst
-	//TInt, TShort, TVoid, TReturn, TBreak, TWhile, TConst
 };
 
 ScanerPosition Scaner::getScanerPosition()
@@ -67,8 +66,6 @@ void Scaner::printError(char* error, char* lexem, int numberOfString, int number
 			printf("Ошибка : %s %s в строке номер %d на позиции %d\n", error, lexem, numberOfString + 1, numberOfPosition + 1);
 		else
 			printf("Ошибка : %s. Неверный символ %s в строке номер %d на позиции %d\n", error, lexem, numberOfString + 1, numberOfPosition + 1);
-
-	//exit(0);
 }
 
 int Scaner::scaner(Lexem l)

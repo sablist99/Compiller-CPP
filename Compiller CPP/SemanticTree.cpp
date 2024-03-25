@@ -21,10 +21,6 @@ SemanticTree::SemanticTree()
 	_node = new Node();
 	_node->typeObject = ObjUndef;
 	_node->typeVar = TypeUndef;
-
-	//_node->param = std::vector<TypeVar>();
-	//_node->dataAsInt = NULL;
-	//_node->flagInit = false;
 	_node->isEmpty = 0;
 }
 
@@ -110,26 +106,12 @@ void SemanticTree::DeleteRight()
 	cur->_right = nullptr;
 }
 
-//SemanticTree* SemanticTree::FillNode(Lexem lexem, TypeObject typeObject, TypeVar typeVar, std::vector<TypeVar>* param, DataValue data, bool flagInit)
 SemanticTree* SemanticTree::FillNode(Lexem lexem, TypeObject typeObject, TypeVar typeVar)
 {
 	Node* node = new Node();
 	memcpy(node->id, lexem, GetLexemLength(lexem));
 	node->typeObject = typeObject;
 	node->typeVar = typeVar;
-	//if (typeObject == ObjFunc) {
-	//	node->data.param = param;
-	//}
-	//else if (typeVar == TypeShort) {
-	//	node->data.dataAsShort = data.dataAsShort;
-	//}
-	//else if (typeVar == TypeInt) {
-	//	node->data.dataAsInt = data.dataAsInt;
-	//}
-	//else {
-
-	//}
-	//node->flagInit = flagInit;
 	node->isEmpty = 0;
 
 	SemanticTree* ret = cur->SetLeft(node);
@@ -137,14 +119,10 @@ SemanticTree* SemanticTree::FillNode(Lexem lexem, TypeObject typeObject, TypeVar
 	return ret;
 }
 
-//SemanticTree* SemanticTree::AddFunctionInTree(Lexem lexem, std::vector<TypeVar>* param)
 SemanticTree* SemanticTree::AddFunctionInTree(Lexem lexem)
 {
 	if (FindIdentUp(lexem, ObjFunc) == NULL) {
 		// Если до этого не было объекта такого типа с таким же именем
-		//DataValue a;
-		//a.param = param;
-		//return FillNode(lexem, ObjFunc, TypeVoid, param, a, false);
 		return FillNode(lexem, ObjFunc, TypeVoid);
 	}
 	else {
@@ -158,8 +136,6 @@ void SemanticTree::AddConstantInTree(Lexem lexem, TypeVar typeVar)
 {
 	if (FindIdentUp(lexem, ObjConst) == NULL) {
 		// Если до этого не было объекта такого типа с таким же именем
-		//std::vector<TypeVar>* empty = new std::vector<TypeVar>{};
-		//FillNode(lexem, ObjConst, typeVar, empty, data, true);
 		FillNode(lexem, ObjConst, typeVar);
 	}
 	else {
@@ -169,13 +145,10 @@ void SemanticTree::AddConstantInTree(Lexem lexem, TypeVar typeVar)
 	}
 }
 
-// SemanticTree::AddDataInTree(Lexem lexem, TypeVar typeVar, DataValue data, bool flagInit)
 void SemanticTree::AddDataInTree(Lexem lexem, TypeVar typeVar)
 {
 	if (FindIdentUp(lexem, ObjVar) == NULL) {
 		// Если до этого не было объекта такого типа с таким же именем
-		//std::vector<TypeVar>* empty = new std::vector<TypeVar>{};
-		//FillNode(lexem, ObjVar, typeVar, empty, data, flagInit);
 		FillNode(lexem, ObjVar, typeVar);
 	}
 	else {
@@ -195,14 +168,6 @@ void SemanticTree::Print(void)
 		std::string id(_node->id);
 		std::string obj = ConvertTypeObjectToString(_node->typeObject);
 		std::string var = ConvertTypeVarToString(_node->typeVar);
-		//std::string flag = ConvertFlaginitToString(_node->flagInit);
-		//std::string value = ConvertValueToString(_node->data, _node->typeVar);
-		//if (_node->flagInit) {
-		//	std::cout << "Вершина с именем '" + id + "', данные о вершине --> (" + obj + ", " + var + ", " + flag + ", " + value + ")";
-		//}
-		//else {
-		//	std::cout << "Вершина с именем '" + id + "', данные о вершине --> (" + obj + ", " + var + ", " + flag + ")";
-		//}
 		std::cout << "Вершина с именем '" + id + "', данные о вершине --> (" + obj + ", " + var + ")";
 	}
 	if (_left != NULL) printf("\n\t слева вершина с именем '%s'", _left->_node->id);
@@ -224,13 +189,7 @@ void SemanticTree::Print(void)
 void SemanticTree::PrintError(std::string error)
 {
 	std::cout << error;
-	//exit(0);
 }
-
-//void SemanticTree::SetParam(std::vector<TypeVar>* param)
-//{
-//	_node->data.param = param;
-//}
 
 void SemanticTree::FindEmptyUp()
 {
@@ -239,20 +198,6 @@ void SemanticTree::FindEmptyUp()
 	}
 	cur = cur->getUp();
 }
-
-//void SemanticTree::SetData(Lexem lexem, DataValue data)
-//{
-//	SemanticTree* temp = FindIdentUp(lexem, ObjVar);
-//	if (temp != NULL) {
-//		temp->getNode()->data = data;
-//		temp->getNode()->flagInit = true;
-//	}
-//	else {
-//		std::string str(lexem);
-//		std::string s = "Не удалось установить данные в вершину '" + str + "', потому чтo она не объявлена ранее\n";
-//		PrintError(s);
-//	}
-//}
 
 TypeVar SemanticTree::GetTypeVarByLexem(Lexem lexem)
 {
@@ -287,52 +232,24 @@ SemanticTree* SemanticTree::FindIdentUp(Lexem lexem)
 	return temp;
 }
 
-//void SemanticTree::CheckInit(Lexem lexem)
-//{
-//	SemanticTree* temp = FindIdentUp(lexem);
-//	if (temp != NULL) {
-//		if (temp->getNode()->flagInit == false) {
-//			std::string str(lexem);
-//			std::string s = "Переменная '" + str + "' не инициализирована перед использованием\n";
-//			PrintError(s);
-//		}
-//	}
-//	else {
-//		std::string str(lexem);
-//		std::string s = "Не удалось проверить инициализацию переменной '" + str + "', потому чтo она не объявлена ранее\n";
-//		PrintError(s);
-//	}
-//}
-
-//void SemanticTree::CheckInitByNode(Node* node) {
-//	if (node->flagInit) {
-//		return;
-//	}
-//	else {
-//		std::string str(node->id);
-//		std::string s = "Переменная '" + str + "' не инициализирована перед использованием\n";
-//		PrintError(s);
-//	}																 
-//}
-
 std::string SemanticTree::ConvertTypeVarToString(TypeVar typeVar)
 {
 	switch (typeVar)
 	{
-		case TypeConstChar:
-			return "TypeConstChar";
-		case TypeChar:
-			return "TypeChar";
+	case TypeConstChar:
+		return "TypeConstChar";
+	case TypeChar:
+		return "TypeChar";
 	case TypeShort:
 		return "TypeShort";
 	case TypeConstInt:
 		return "TypeConstInt";
 	case TypeInt:
 		return "TypeInt";
-		case TypeConstHex:
-			return "TypeConstHex";
-		case TypeLong:
-			return "TypeLong";
+	case TypeConstHex:
+		return "TypeConstHex";
+	case TypeLong:
+		return "TypeLong";
 	case TypeVoid:
 		return "TypeVoid";
 	case TypeIdent:
@@ -348,20 +265,12 @@ TypeVar SemanticTree::ConvertTypeLexemToTypeVar(int typeLexem)
 {
 	switch (typeLexem)
 	{
-		//case TChar:
-		//	return TypeChar;
 	case TShort:
 		return TypeShort;
 	case TInt:
 		return TypeInt;
-		//case TLong:
-		//	return TypeLong;
 	case TConstInt:
 		return TypeConstInt;
-		//case TConstChar:
-		//	return TypeConstChar;
-		//case TConstHex:
-		//	return TypeConstHex;
 	case TVoid:
 		return TypeVoid;
 	case TIdent:
@@ -408,7 +317,6 @@ std::string SemanticTree::ConvertValueToString(DataValue dataValue, TypeVar type
 	return std::string("");
 }
 
-
 int SemanticTree::GetLexemLength(Lexem lexem)
 {
 	int len = 0;
@@ -446,16 +354,6 @@ bool SemanticTree::vectorEquivalence(std::vector<TypeVar> f, std::vector<TypeVar
 	}
 	else return false;
 }
-
-//void SemanticTree::CheckParamList(Lexem lexem, std::vector<TypeVar> param)
-//{
-//	SemanticTree* temp = FindIdentUp(lexem, ObjFunc);
-//	if (!vectorEquivalence(*(temp->getNode()->data.param), param)) {
-//		std::string str(lexem);
-//		std::string s = "Параметры функции '" + str + "' при вызове не совпадают с параметрами при объявлении\n";
-//		PrintError(s);
-//	}
-//}
 
 long SemanticTree::ConvertTypeLexemToNumber(Lexem lexem)
 {

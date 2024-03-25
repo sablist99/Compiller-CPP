@@ -152,18 +152,17 @@ struct Operand {
 	Lexem lex;         // непосредственный операнд
 };
 
-struct Triad {
-	Lexem operation;  //  операци€
-	Operand operand1, operand2;
-	TypeOperation typeOperation;
-};
-
 enum TypeOperation {
 	NoneOperation,
 	MathOperation,
 	LogicOperation
 };
 
+struct Triad {
+	Lexem operation; //  операци€
+	Operand operand1, operand2;
+	TypeOperation typeOperation;
+};
 
 enum TypeObject {
 	ObjConst = 1,   // константа
@@ -202,7 +201,6 @@ union DataValue
 	};
 };
 
-
 struct Node // информаци€ об одной переменной
 {
 	Lexem id; // идентификатор переменной
@@ -210,15 +208,8 @@ struct Node // информаци€ об одной переменной
 	TypeObject typeObject;
 	TypeVar typeVar;
 
-	// ссылка на значение
-	//DataValue data; // «начение переменной
-
-	//bool flagInit; // ‘лаг начальной инициализации
-
 	int isEmpty;
 };
-
-//	 ћагазин
 
 #define MaxLenMag 1000
 struct TOneSymb

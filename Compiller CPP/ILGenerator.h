@@ -4,11 +4,12 @@
 class ILGenerator 
 {
 private:
-	Lexem* getLexemFromString(std::string s);
 
 public:
 	SemanticTree* tree;
 	GlobalData* global;
+
+	static Lexem* getLexemFromString(std::string s);
 
 	void setAddr();
 	void startFunc();

@@ -105,12 +105,12 @@ void LLK_Analyzer::makeAnalyze(bool printTree) {
 				break;
 
 			case TR_GENER_LSH:
-				generator->generateTriade("<<", LogicOperation);
+				generator->generateTriade("<<", MathOperation);
 				epsilon();
 				break;
 
 			case TR_GENER_RSH:
-				generator->generateTriade(">>", LogicOperation);
+				generator->generateTriade(">>", MathOperation);
 				epsilon();
 				break;
 

@@ -25,10 +25,10 @@ public:
 	void printError(char*, char*, int, int);
 	int scaner(Lexem l);
 	void readFile(char*);
-	bool isNumber(char);
-	bool isHex(char);
-	bool isLCase(char);
-	bool isUCase(char);
+	static bool isNumber(char);
+	static bool isHex(char);
+	static bool isLCase(char);
+	static bool isUCase(char);
 	Scaner(char*);
 	Scaner();
 	~Scaner();

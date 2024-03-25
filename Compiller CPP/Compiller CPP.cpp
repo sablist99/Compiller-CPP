@@ -15,12 +15,13 @@ int main()
     SemanticTree* tr = new SemanticTree();
     Translate* translate = new Translate(tr, global);
     ILGenerator* generator = new ILGenerator(tr, global);
-    Optimizator* optimizator = new Optimizator(global);
-    optimizator->SimplifyingCalculationMathematicalFunctions();
-    optimizator->SimplifyingLogicalOperations();
 
     tr->SetCur(tr);
     LLK_Analyzer* llk = new LLK_Analyzer(sc, translate, generator);
 
     llk->makeAnalyze(true);
+
+    Optimizator* optimizator = new Optimizator(global);
+    optimizator->SimplifyingCalculationMathematicalFunctions();
+    optimizator->SimplifyingLogicalOperations();
 }
