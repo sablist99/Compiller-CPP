@@ -100,11 +100,11 @@ void ILGenerator::generateIfTriad() {
 	Lexem* operation = getLexemFromString("if");
 	memcpy(triad.operation, operation, sizeof(operation));
 
-	Operand first{};
-	first.isLink = true;
-	first.triadeNumber = this->global->triads.size() + 1;
+	Operand second{};
+	second.isLink = true;
+	second.triadeNumber = this->global->triads.size() + 1;
 
-	triad.operand1 = first;
+	triad.operand2 = second;
 	this->global->triads.push_back(triad);
 }
 
@@ -112,11 +112,11 @@ void ILGenerator::generateFormIf() {
 	int triadNumber = global->triadesIndexMagazine.back();
 	global->triadesIndexMagazine.pop_back();
 
-	Operand second{};
-	second.isLink = true;
-	second.triadeNumber = global->triads.size() + 1;
+	Operand first{};
+	first.isLink = true;
+	first.triadeNumber = global->triads.size() + 1;
 
-	global->triads.at(triadNumber).operand2 = second;
+	global->triads.at(triadNumber).operand1 = first;
 }
 
 void ILGenerator::generateGoto() {

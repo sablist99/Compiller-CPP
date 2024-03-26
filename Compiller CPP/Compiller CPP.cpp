@@ -24,4 +24,5 @@ int main()
     Optimizator* optimizator = new Optimizator(global);
     optimizator->SimplifyingCalculationMathematicalFunctions();
     optimizator->SimplifyingLogicalOperations();
+    optimizator->PrintTriades();
 }

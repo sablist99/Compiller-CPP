@@ -2,7 +2,7 @@ void abc(int i) {
 	int b = 1;
 	int c = 2 - 3;
 	c = b + 4;
-	while (b + 8 * 7 < c - 8) {
+	while (0 < 9 - 8) {
 		c = c - 5;
 	}
 }

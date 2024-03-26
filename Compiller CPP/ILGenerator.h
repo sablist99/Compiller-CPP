@@ -10,6 +10,7 @@ public:
 	GlobalData* global;
 
 	static Lexem* getLexemFromString(std::string s);
+	static bool isShortTriad(Lexem* operation);
 
 	void setAddr();
 	void startFunc();
@@ -23,7 +24,6 @@ public:
 	void deltaMatch(bool isLeftMatch);
 	void deltaPushOperand(bool isConst);
 	void generateTriade(std::string operationString, TypeOperation typeOperation);
-	bool isShortTriad(Lexem* operation);
 	std::string getMatchLexem(TypeVar v1, TypeVar v2, bool* swap);
 	ILGenerator(SemanticTree* tr, GlobalData* gl);
 };

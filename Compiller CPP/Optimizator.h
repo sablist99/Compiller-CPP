@@ -15,6 +15,8 @@ public:
 	long LexemToNumber(Lexem* newValue);
 	Lexem* NumberToLexem(long number);
 	void ReplaceTriadToNop(int triadeNumber);
-	Lexem* CalculateValue(Triad* triad);
+	Lexem* CalculateMathValue(Triad* triad);
+	bool CalculateLogicValue(Triad* triad);
+	void PrintTriades();
 	Optimizator(GlobalData* gl);
 };
