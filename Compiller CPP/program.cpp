@@ -1,20 +1,11 @@
-void abc(int i) {
-	int b = 1;
-	int c = 2 - 3;
-	c = b + 4;
-	while (0 < 9 - 8) {
-		c = c - 5;
-	}
-}
+void abc() {}
 
 void main() {
-	int b = 5;
-	short c = 10;
-	while (b < c) {
-		c = c - 123;
+	int a = 1;
+	int b = 1 + 1;
+	while (1 + 1 <= 2 + 2) {
+		abc();
 	}
-	abc();
+	int c = 3;
 }
-
-
 

@@ -19,7 +19,7 @@ int main()
     tr->SetCur(tr);
     LLK_Analyzer* llk = new LLK_Analyzer(sc, translate, generator);
 
-    llk->makeAnalyze(true);
+    llk->makeAnalyze(false);
 
     Optimizator* optimizator = new Optimizator(global);
     optimizator->SimplifyingCalculationMathematicalFunctions();

@@ -17,9 +17,11 @@ void Optimizator::SimplifyingCalculationMathematicalFunctions() {
 				Scaner::isNumber((currentTriad->operand2.lex)[0])) {
 				// Если мы можем вычислить значение, то вычисляем
 				Lexem* newValue = CalculateMathValue(currentTriad);
+				Lexem localLexem;
+				memcpy(localLexem, newValue, sizeof(newValue));
 
 				// И подставляем его во все места, где была ссылка на текущую триаду
-				ReplaceLinkToNewValue(currentTriadNumber, newValue);
+				ReplaceLinkToNewValue(currentTriadNumber, &localLexem);
 
 				// А текущую триаду заменяем на пустую
 				ReplaceTriadToNop(currentTriadNumber);
@@ -166,6 +168,7 @@ void Optimizator::SimplifyingLogicalOperations() {
 
 				if (newValue) {
 					// Ошибка
+					std::cout << "Ошибка оптимизатора - бесконечный цикл" << std::endl;
 				}
 				else {
 					// Удаляем все триады с текущей до [goto 'текущая триада']
@@ -221,7 +224,8 @@ Lexem* Optimizator::NumberToLexem(long number) {
 	}
 
 	while (range != -1) {
-		l[range] = (char)number % 10 + 48;
+		int div = number % 10;
+		l[range] = (char)(div + 48);
 		number /= 10;
 		range--;
 	}
